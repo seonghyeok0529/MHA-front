@@ -95,7 +95,18 @@ function ChatPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: userMessage, history: messages }),
+        body: JSON.stringify({
+          messages: [
+            ...messages.map((message) => ({
+              role: message.role,
+              content: message.content,
+            })),
+            {
+              role: 'user',
+              content: userMessage,
+            },
+          ],
+        }),
       });
 
       if (!response.ok) {
