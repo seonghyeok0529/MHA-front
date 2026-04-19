@@ -14,7 +14,7 @@ interface ChatResponse {
   message?: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '');
 
 function HomePage() {
   return (
@@ -86,16 +86,21 @@ function ChatPage() {
     const userMessage = input.trim();
     setInput('');
     setError('');
-    setMessages((prev) => [...prev, { id: Date.now(), role: 'user', content: userMessage }]);
+    const nextHistory = [...messages, { id: Date.now(), role: 'user' as const, content: userMessage }];
+    setMessages(nextHistory);
     setIsLoading(true);
 
     try {
+      if (!API_URL) {
+        throw new Error('Missing VITE_API_URL');
+      }
+
       const response = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: userMessage, history: messages }),
+        body: JSON.stringify({ message: userMessage, history: nextHistory }),
       });
 
       if (!response.ok) {
