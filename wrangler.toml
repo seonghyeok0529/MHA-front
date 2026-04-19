@@ -1,2 +1,5 @@
+name = "pre-consultation-mental-health-assessment-support"
+compatibility_date = "2026-04-19"
+
 [assets]
 directory = "./dist"
