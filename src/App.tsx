@@ -239,11 +239,6 @@ function ChatPage() {
             {error}
           </p>
         )}
-        {sessionId && (
-          <p className="mt-3 text-xs text-slate-500">
-            세션 ID: {sessionId} · <Link to={`/report?sessionId=${encodeURIComponent(sessionId)}`} className="underline">이 세션 리포트 보기</Link>
-          </p>
-        )}
       </form>
     </main>
   );
