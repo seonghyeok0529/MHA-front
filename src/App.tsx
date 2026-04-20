@@ -239,6 +239,7 @@ function ChatPage() {
             {error}
           </p>
         )}
+        {sessionId && <p className="mt-3 text-xs text-slate-500">세션 ID: {sessionId}</p>}
       </form>
     </main>
   );
