@@ -1,5 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import PatternTags from '../components/PatternTags';
+import UserTypeBadge from '../components/UserTypeBadge';
 import { SessionListItem } from '../types/report';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -77,23 +79,22 @@ export default function DashboardPage() {
     });
   }, [sessions]);
 
+  const openReport = (sessionId: string) => {
+    navigate(`/mentalhealth/report?sessionId=${encodeURIComponent(sessionId)}`);
+  };
+
   const handleManualSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextSessionId = sessionInput.trim();
     if (!nextSessionId) return;
-    navigate(`/report?sessionId=${encodeURIComponent(nextSessionId)}`);
+    openReport(nextSessionId);
   };
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-8 sm:px-6">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-800">리포트 대시보드</h1>
-          <p className="mt-1 text-sm text-slate-500">세션을 선택하면 바로 상담 리포트로 이동합니다.</p>
-        </div>
-        <Link to="/chat" className="rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50">
-          새 상담 시작
-        </Link>
+    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-8 sm:px-6">
+      <header className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h1 className="text-2xl font-semibold text-slate-800">상담 의사결정 대시보드</h1>
+        <p className="mt-2 text-sm text-slate-500">세션을 열어 핵심 요약·패턴·위험도를 빠르게 파악하고 바로 상담 질문을 준비하세요.</p>
       </header>
 
       <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -107,7 +108,7 @@ export default function DashboardPage() {
             className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           />
           <button type="submit" className="rounded-xl bg-slate-700 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
-            리포트 보기
+            리포트 열기
           </button>
         </form>
       </section>
@@ -117,16 +118,36 @@ export default function DashboardPage() {
         {isLoading && <p className="mt-3 text-sm text-slate-500">세션 목록을 불러오는 중...</p>}
         {error && <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">{error}</p>}
 
-        <ul className="mt-4 space-y-2">
+        <ul className="mt-4 space-y-3">
           {dedupedSessions.map((session) => (
             <li key={session.sessionId}>
-              <Link
-                to={`/report?sessionId=${encodeURIComponent(session.sessionId)}`}
-                className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 transition hover:bg-slate-100"
+              <button
+                type="button"
+                onClick={() => openReport(session.sessionId)}
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-sky-200 hover:bg-sky-50/50"
               >
-                <span className="font-medium text-slate-700">{session.sessionId}</span>
-                <span className="text-xs text-slate-500">{formatDate(session.updatedAt ?? session.createdAt)}</span>
-              </Link>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-semibold text-slate-800">세션 {session.sessionId}</p>
+                  <UserTypeBadge userType={session.userType} />
+                </div>
+
+                <p
+                  className="mt-2 text-sm leading-relaxed text-slate-600"
+                  style={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {session.summary || '요약 정보가 없어 상세 리포트에서 확인이 필요합니다.'}
+                </p>
+
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <PatternTags patterns={session.patterns ?? []} maxCount={2} />
+                  <span className="text-xs text-slate-500">{formatDate(session.createdAt ?? session.updatedAt)}</span>
+                </div>
+              </button>
             </li>
           ))}
           {!isLoading && dedupedSessions.length === 0 && <li className="text-sm text-slate-500">표시할 세션이 없습니다.</li>}

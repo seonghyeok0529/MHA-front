@@ -30,12 +30,6 @@ function HomePage() {
         >
           대화 시작하기
         </Link>
-        <Link
-          to="/dashboard"
-          className="rounded-full bg-white px-7 py-3 text-base font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50"
-        >
-          리포트 대시보드
-        </Link>
       </div>
     </main>
   );
@@ -247,7 +241,7 @@ function ChatPage() {
         )}
         {sessionId && (
           <p className="mt-3 text-xs text-slate-500">
-            세션 ID: {sessionId} · <Link to={`/report?sessionId=${encodeURIComponent(sessionId)}`} className="underline">이 세션 리포트 보기</Link>
+            세션 ID: {sessionId} · <span className="opacity-80">상담 중인 세션 ID입니다.</span>
           </p>
         )}
       </form>
@@ -260,8 +254,10 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/chat" element={<ChatPage />} />
-      <Route path="/report" element={<ReportPage />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/mentalhealth/report" element={<ReportPage />} />
+      <Route path="/mentalhealth/dashboard" element={<DashboardPage />} />
+      <Route path="/report" element={<Navigate to="/mentalhealth/report" replace />} />
+      <Route path="/dashboard" element={<Navigate to="/mentalhealth/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
