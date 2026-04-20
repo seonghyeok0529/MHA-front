@@ -56,6 +56,7 @@ function ChatPage() {
 
       if (index >= typingSource.length) {
         window.clearInterval(timer);
+        setTypedMessage('');
         setMessages((prev) => [
           ...prev,
           {
@@ -83,9 +84,9 @@ function ChatPage() {
   };
 
   const visibleMessages = useMemo(() => {
-    if (!typedMessage) return messages;
+    if (!typingSource || !typedMessage) return messages;
     return [...messages, { id: -1, role: 'assistant' as const, content: typedMessage }];
-  }, [messages, typedMessage]);
+  }, [messages, typedMessage, typingSource]);
 
   const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
