@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
 
 type Role = 'user' | 'assistant';
@@ -72,6 +72,15 @@ function ChatPage() {
   }, [typingSource]);
 
   const canSubmit = input.trim().length > 0 && !isLoading && !typingSource;
+
+  const handleTextareaKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) return;
+
+    event.preventDefault();
+    if (!canSubmit) return;
+
+    event.currentTarget.form?.requestSubmit();
+  };
 
   const visibleMessages = useMemo(() => {
     if (!typedMessage) return messages;
@@ -162,6 +171,7 @@ function ChatPage() {
           id="message"
           value={input}
           onChange={(event) => setInput(event.target.value)}
+          onKeyDown={handleTextareaKeyDown}
           rows={3}
           placeholder="예: 요즘 마음이 자주 무거워지는 느낌이 들어요..."
           className="w-full resize-none rounded-xl border border-slate-200 p-3 text-base leading-relaxed text-slate-800 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
