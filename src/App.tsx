@@ -44,6 +44,46 @@ function ChatPage() {
   const [typedMessage, setTypedMessage] = useState('');
   const [typingSource, setTypingSource] = useState('');
   const [error, setError] = useState('');
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const createSession = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/session`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Session API error');
+        }
+
+        const data: { sessionId?: string } = await response.json();
+        if (!data.sessionId) {
+          throw new Error('Session ID missing');
+        }
+
+        if (isMounted) {
+          setSessionId(data.sessionId);
+        }
+      } catch (sessionError) {
+        console.error(sessionError);
+        if (isMounted) {
+          setError('세션을 준비하지 못했습니다. 잠시 후 다시 시도해주세요.');
+        }
+      }
+    };
+
+    void createSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!typingSource) return;
@@ -72,7 +112,7 @@ function ChatPage() {
     return () => window.clearInterval(timer);
   }, [typingSource]);
 
-  const canSubmit = input.trim().length > 0 && !isLoading && !typingSource;
+  const canSubmit = input.trim().length > 0 && !isLoading && !typingSource && Boolean(sessionId);
 
   const handleTextareaKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) return;
@@ -92,6 +132,7 @@ function ChatPage() {
     event.preventDefault();
 
     if (!canSubmit) return;
+    if (!sessionId) return;
 
     const userMessage = input.trim();
     setInput('');
@@ -106,6 +147,7 @@ function ChatPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          sessionId,
           messages: [
             ...messages.map((message) => ({
               role: message.role,
