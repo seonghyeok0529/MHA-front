@@ -1,5 +1,7 @@
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import DashboardPage from './pages/DashboardPage';
+import ReportPage from './pages/ReportPage';
 
 type Role = 'user' | 'assistant';
 
@@ -235,6 +237,7 @@ function ChatPage() {
             {error}
           </p>
         )}
+        {sessionId && <p className="mt-3 text-xs text-slate-500">세션 ID: {sessionId}</p>}
       </form>
     </main>
   );
@@ -245,6 +248,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/chat" element={<ChatPage />} />
+      <Route path="/report" element={<ReportPage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
