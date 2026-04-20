@@ -1,7 +1,8 @@
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
-import ReportPage from './pages/ReportPage';
+import ProfessionalReportPage from './pages/ProfessionalReportPage';
+import UserReportPage from './pages/UserReportPage';
 
 type Role = 'user' | 'assistant';
 
@@ -185,6 +186,22 @@ function ChatPage() {
       <header className="mb-6">
         <h1 className="text-2xl font-semibold text-slate-800">사전 상담 대화</h1>
         <p className="mt-2 text-sm leading-relaxed text-calm-600">평가하지 않는 대화 공간입니다. 떠오르는 이야기를 천천히 적어주세요.</p>
+        {sessionId && (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Link
+              to={`/mentalhealth/result?sessionId=${encodeURIComponent(sessionId)}`}
+              className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+            >
+              사용자 리포트 보기
+            </Link>
+            <Link
+              to={`/mentalhealth/report?sessionId=${encodeURIComponent(sessionId)}`}
+              className="rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+            >
+              전문가 리포트 보기
+            </Link>
+          </div>
+        )}
       </header>
 
       <section className="flex-1 space-y-4 overflow-y-auto rounded-2xl bg-white/70 p-4 sm:p-6">
@@ -249,7 +266,9 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/chat" element={<ChatPage />} />
-      <Route path="/report" element={<ReportPage />} />
+      <Route path="/mentalhealth/result" element={<UserReportPage />} />
+      <Route path="/mentalhealth/report" element={<ProfessionalReportPage />} />
+      <Route path="/report" element={<ProfessionalReportPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

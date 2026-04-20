@@ -81,7 +81,7 @@ export default function DashboardPage() {
     event.preventDefault();
     const nextSessionId = sessionInput.trim();
     if (!nextSessionId) return;
-    navigate(`/report?sessionId=${encodeURIComponent(nextSessionId)}`);
+    navigate(`/mentalhealth/result?sessionId=${encodeURIComponent(nextSessionId)}`);
   };
 
   return (
@@ -121,7 +121,7 @@ export default function DashboardPage() {
           {dedupedSessions.map((session) => (
             <li key={session.sessionId}>
               <Link
-                to={`/report?sessionId=${encodeURIComponent(session.sessionId)}`}
+                to={`/mentalhealth/result?sessionId=${encodeURIComponent(session.sessionId)}`}
                 className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 transition hover:bg-slate-100"
               >
                 <span className="font-medium text-slate-700">{session.sessionId}</span>
