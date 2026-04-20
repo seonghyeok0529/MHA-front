@@ -1,5 +1,7 @@
 import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import DashboardPage from './pages/DashboardPage';
+import ReportPage from './pages/ReportPage';
 
 type Role = 'user' | 'assistant';
 
@@ -21,12 +23,20 @@ function HomePage() {
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center px-6 py-12 text-center">
       <h1 className="text-3xl font-semibold tracking-tight text-slate-800 sm:text-4xl">사전 상담 대화</h1>
       <p className="mt-6 max-w-xl text-lg leading-relaxed text-calm-600">편하게 이야기해 주세요. 정답은 없습니다.</p>
-      <Link
-        to="/chat"
-        className="mt-10 rounded-full bg-slate-700 px-7 py-3 text-base font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
-      >
-        대화 시작하기
-      </Link>
+      <div className="mt-10 flex flex-wrap justify-center gap-3">
+        <Link
+          to="/chat"
+          className="rounded-full bg-slate-700 px-7 py-3 text-base font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+        >
+          대화 시작하기
+        </Link>
+        <Link
+          to="/dashboard"
+          className="rounded-full bg-white px-7 py-3 text-base font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50"
+        >
+          리포트 대시보드
+        </Link>
+      </div>
     </main>
   );
 }
@@ -235,6 +245,11 @@ function ChatPage() {
             {error}
           </p>
         )}
+        {sessionId && (
+          <p className="mt-3 text-xs text-slate-500">
+            세션 ID: {sessionId} · <Link to={`/report?sessionId=${encodeURIComponent(sessionId)}`} className="underline">이 세션 리포트 보기</Link>
+          </p>
+        )}
       </form>
     </main>
   );
@@ -245,6 +260,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/chat" element={<ChatPage />} />
+      <Route path="/report" element={<ReportPage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
