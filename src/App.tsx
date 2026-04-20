@@ -30,12 +30,6 @@ function HomePage() {
         >
           대화 시작하기
         </Link>
-        <Link
-          to="/dashboard"
-          className="rounded-full bg-white px-7 py-3 text-base font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50"
-        >
-          리포트 대시보드
-        </Link>
       </div>
     </main>
   );
